@@ -11,7 +11,7 @@ const options=(id,items,selected)=>{$(id).innerHTML=items.map(([v,l])=>`<option 
 const topics=data.ui?.topics || (modern? [['Technology',4],['Innovation',5],['Markets & customers',2],['Finance',3],['Ownership & collaboration',1],['Performance',6],['Barriers',7]] : [['Innovation',4],['Barriers',6],['Markets & competition',2],['Finance',3],['Ownership & cooperation',1],['Performance',5]]);
 let active=4, csvRows=[];
 function national(id,c){return tableBy(id).rows.find(r=>r.group==='Overall').cells[c];}
-const cards=data.ui?data.ui.cards.map(([label,id,c])=>[label,national(id,c),'%',`DO00${id.split('-')[0]} / Table ${id.split('-')[1]}`]):modern? [['Internet access',national('4-1',8),'%','DO004 / Table 1'],['Web presence',national('4-1',9),'%','DO004 / Table 1'],['Received orders online',national('4-1',11),'%','DO004 / Table 1'],['Introduced goods or services innovation',national('5-1',2),'%','DO005 / Table 1']] : [['Businesses in survey scope',national('1-1',0),"'000",'DO001 \u00b7 Table 1'],['Introduced goods or services innovation',national('4-1',2),'%','DO004 \u00b7 Table 1'],['Operated in overseas markets',national('2-1',8),'%','DO002 \u00b7 Table 1'],['Reported barriers to innovation',national('6-1',8),'%','DO006 \u00b7 Table 1']];
+const cards=data.ui?data.ui.cards.map(([label,id,c])=>[label,national(id,c),'%',`${data.year==='2024-25'?'BCSDC'+id.split('-')[0].padStart(2,'0'):'DO00'+id.split('-')[0]} / Table ${id.split('-')[1]}`]):modern? [['Internet access',national('4-1',8),'%','DO004 / Table 1'],['Web presence',national('4-1',9),'%','DO004 / Table 1'],['Received orders online',national('4-1',11),'%','DO004 / Table 1'],['Introduced goods or services innovation',national('5-1',2),'%','DO005 / Table 1']] : [['Businesses in survey scope',national('1-1',0),"'000",'DO001 \u00b7 Table 1'],['Introduced goods or services innovation',national('4-1',2),'%','DO004 \u00b7 Table 1'],['Operated in overseas markets',national('2-1',8),'%','DO002 \u00b7 Table 1'],['Reported barriers to innovation',national('6-1',8),'%','DO006 \u00b7 Table 1']];
 $('kpis').innerHTML=cards.map(([label,c,u,src])=>`<article class="kpi" title="${esc(hint(c))}"><p>${esc(label)}</p><strong>${u==="'000"?`${c.value.toLocaleString()}k`:fmt(c,u)}</strong><small>National total \u00b7 ${src}</small></article>`).join('');
 function heatCell(c,unit='%'){
  const p=c.value===null?0:Math.max(0,Math.min(100,c.value))/100;
@@ -69,7 +69,7 @@ function render(){
   const limit=entries[0]?.unit==='%'?100:Math.max(1,...valid.map(e=>e.cell.value))*1.05;
   $('chart').innerHTML=`<div class="bars" role="list" aria-label="${esc($('chartTitle').textContent)}">${entries.map(e=>`<div class="bar-row" role="listitem" tabindex="0" title="${esc(e.label+' \u00b7 '+fmt(e.cell,e.unit)+' \u00b7 '+hint(e.cell))}"><span>${esc(e.label)}</span><div class="track" aria-hidden="true"><div class="fill" style="width:${e.cell.value===null?0:e.cell.value/limit*100}%"></div></div><strong>${fmt(e.cell,e.unit)}</strong></div>`).join('')}<div class="axis">${[0,.25,.5,.75,1].map(x=>`<span>${Math.round(x*limit)}${entries[0]?.unit==='%'?'%':''}</span>`).join('')}</div></div>`;
  }
- $('source').innerHTML=`Source: <a href="${esc(t.source)}">${esc(t.source.split('/').at(-1))}</a> &middot; ${esc(t.sheet)} &middot; Survey period ${esc(data.period)}. &dagger; Caution &middot; &asymp; Nil or rounded to zero &middot; NP Not published &middot; &mdash; Missing.`;
+ $('source').innerHTML=`Source: <a href="${esc(t.source)}">${esc(t.source.split('/').at(-1))}</a> &middot; ${esc(t.sheet)} &middot; Survey period ${esc(t.period||data.period)}. &dagger; Caution &middot; &asymp; Nil or rounded to zero &middot; NP Not published &middot; &mdash; Missing.`;
  csvRows=mode==='heat'?entries.flatMap(e=>t.headers.map((h,i)=>({label:e.label,measure:h.label,cell:e.row.cells[i],unit:h.unit,row:e.row}))):entries.map(e=>({...e,measure:mode==='groups'?head.label:e.label}));
  $('values').innerHTML=`<table class="values"><thead><tr><th>Category</th><th>Measure</th><th>Value</th><th>Source cell</th><th>Notes</th></tr></thead><tbody>${csvRows.map(e=>`<tr><td>${esc(mode==='measures'?e.row.label:e.label)}</td><td>${esc(e.measure)}</td><td>${fmt(e.cell,e.unit)}</td><td>${esc(e.cell.cell)}</td><td>${esc([e.row.note,hint(e.cell)].filter(Boolean).join(' '))}</td></tr>`).join('')}</tbody></table>`;
  $('notes').innerHTML='<h4>Original table and header notes</h4>'+(t.notes.length?t.notes.map(n=>`<p><strong>${esc(n.cell)}</strong> \u00b7 ${esc(n.text)}</p>`).join(''):'<p>No table or header comments recorded in this sheet.</p>');
@@ -80,7 +80,7 @@ for(const id of ['mode','group','metric','row','sort'])$(id).addEventListener('c
 $('overviewGroup').addEventListener('change',overview);
 $('download').addEventListener('click',()=>{
  const t=current();const quote=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
- const rows=[['Category','Measure','Value','Unit','Status','Cell','Notes','Workbook','Sheet','Period','Table notes'],...csvRows.map(e=>[$('mode').value==='measures'?e.row.label:e.label,e.measure,e.cell.value,e.unit,e.cell.status,e.cell.cell,[e.row.note,e.cell.note,e.headerNote].filter(Boolean).join(' '),t.source,t.sheet,data.period,t.notes.map(n=>n.cell+': '+n.text).join(' | ')])];
+ const rows=[['Category','Measure','Value','Unit','Status','Cell','Notes','Workbook','Sheet','Period','Table notes'],...csvRows.map(e=>[$('mode').value==='measures'?e.row.label:e.label,e.measure,e.cell.value,e.unit,e.cell.status,e.cell.cell,[e.row.note,e.cell.note,e.headerNote].filter(Boolean).join(' '),t.source,t.sheet,t.period||data.period,t.notes.map(n=>n.cell+': '+n.text).join(' | ')])];
  const blob=new Blob(['\ufeff'+rows.map(r=>r.map(quote).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`australian-business-${t.id}-${data.year||'2005-06'}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
 
@@ -104,9 +104,9 @@ function renderModern(){
  const add=(r,i,label)=>({label,measure:t.headers[i].label,cell:r.cells[i],unit:t.headers[i].unit,row:r,header:t.headers[i],headerNote:[t.headers[i].denominator,...t.headers[i].notes].join(' ')});
  if(mode==='measures'){
   const r=t.rows[Number($('row').value)];
-  entries=hs.filter(h=>h.unit==='%').map(h=>add(r,h.i,h.measure));
+  entries=hs.filter(h=>h.unit==='%'||hs.every(x=>x.unit===h.unit)).map(h=>add(r,h.i,h.measure));
   $('chartTitle').textContent=r.label;
-  $('chartContext').textContent=`${r.group} / ${pop}. Percentage measures; counts are available in category and heatmap views.`;
+  $('chartContext').textContent=`${r.group} / ${pop}. ${hs.some(h=>h.unit==='%')?'Percentage measures; counts are available in category and heatmap views.':'Business counts in thousands.'}`;
  }else{
   const rows=t.rows.filter(r=>r.group===$('group').value);
   if(mode==='heat')entries=rows.flatMap(r=>hs.map(h=>add(r,h.i,r.label)));
@@ -131,7 +131,7 @@ function renderModern(){
   const limit=entries[0]?.unit==='%'?100:Math.max(1,...valid.map(e=>e.cell.value))*1.05;
   $('chart').innerHTML=`<div class="bars" role="list" aria-label="${esc($('chartTitle').textContent)}">${entries.map(e=>`<div class="bar-row ${e.cell.status==='unreliable'?'unreliable':''}" role="listitem" tabindex="0" title="${esc(e.label+' / '+fmt(e.cell,e.unit)+' / '+hint(e.cell))}"><span>${esc(e.label)}</span><div class="track" aria-hidden="true"><div class="fill" style="width:${e.cell.value===null||e.cell.status==='unreliable'?0:e.cell.value/limit*100}%"></div></div><strong>${fmt(e.cell,e.unit)}</strong></div>`).join('')}<div class="axis">${[0,.25,.5,.75,1].map(x=>`<span>${Math.round(x*limit)}${entries[0]?.unit==='%'?'%':''}</span>`).join('')}</div></div>`;
  }
- $('source').innerHTML=`Source: <a href="${esc(t.source)}">${esc(t.source.split('/').at(-1))}</a> / ${esc(t.sheet)} / ${esc(data.period)}. &dagger; Caution / !! Too unreliable for general use / &asymp; Rounded zero / NP Not published / &mdash; Missing.`;
+ $('source').innerHTML=`Source: <a href="${esc(t.source)}">${esc(t.source.split('/').at(-1))}</a> / ${esc(t.sheet)} / ${esc(t.period||data.period)}. &dagger; Caution / !! Too unreliable for general use / &asymp; Rounded zero / NP Not published / &mdash; Missing.`;
  csvRows=entries;
  $('values').innerHTML=`<table class="values"><thead><tr><th>Category</th><th>Measure / population</th><th>Value</th><th>Source cell</th><th>Notes</th></tr></thead><tbody>${entries.map(e=>`<tr><td>${esc(e.row.label)}</td><td>${esc(e.measure)}</td><td>${fmt(e.cell,e.unit)}</td><td>${esc(e.cell.cell)}</td><td>${esc([e.row.note,hint(e.cell),e.headerNote].filter(Boolean).join(' '))}</td></tr>`).join('')}</tbody></table>`;
  $('notes').innerHTML='<h4>Original table and header notes</h4>'+t.notes.map(n=>`<p><strong>${esc(n.cell)}</strong> / ${esc(n.text)}</p>`).join('');

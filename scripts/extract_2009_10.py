@@ -75,7 +75,7 @@ def extract():
                     if matched not in pop_order:pop_order.append(matched)
                     continue
                 if not any(s.cell_type(r,c)==xlrd.XL_CELL_NUMBER or note(r,c) for c in cols):section=label;continue
-                group='Overall' if label=='Total' and section in ['Employment size','Industry','Region','State/territory'] else section
+                group='Overall' if label in ['Total','Total All Industries'] and section in ['Employment size','Industry','Region','State/territory'] else section
                 cells=[]
                 for c in cols:
                     raw=s.cell_value(r,c);n=note(r,c);value=raw if isinstance(raw,(int,float)) else None;status='published'
