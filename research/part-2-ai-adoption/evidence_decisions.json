@@ -1,0 +1,8 @@
+{
+  "innovation_status": "D - withheld from derived comparisons",
+  "source": "https://www.abs.gov.au/statistics/industry/technology-and-innovation/characteristics-australian-business/2024-25",
+  "reviewed": "2026-09-14",
+  "finding": "The release narrative describes higher AI adoption among innovation-active businesses. Its chart footnote instead describes a denominator of businesses reporting AI use. The published chart and narrative do not resolve this inconsistency.",
+  "decision": "No innovation gap or causal inference is calculated. No numeric innovation chart is included until the denominator is confirmed.",
+  "history": "The release names 2022-23 in its AI key statistics and 2021-22 in the detailed ICT discussion. Local workbook periods identify the historical snapshots used here. No continuous trend or growth calculation is approved."
+}

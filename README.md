@@ -231,3 +231,35 @@ python scripts/test_2024_25.py
 The extractor uses each workbook's declared table range to exclude stray formatting, reads caution markers from Excel number formats, and preserves suppression and explicit null-as-zero footnotes. It retains the mobile-wireless total despite its blank unit cell. Conditional denominators and original source coordinates are preserved. Connection categories changed from 2021-22; the page identifies this comparison limitation.
 
 All 29,311 observations were checked against XLSX sources. Browser checks cover every table, population, four display modes, conditional finance denominators, CSV exports, state/territory and location breakdowns, and mobile width. Screenshots are saved to `artifacts/dashboard-2024-25-desktop.png` and `artifacts/dashboard-2024-25-mobile.png`.
+
+## Research series
+
+Part 1: [Long-run digital-capability study](research/part-1-digital-capability/protocol.md). The protocol separates eight dimensions and requires source review before time-series harmonisation. Rebuild the discovery inventory with `python scripts/inventory_digital_capability.py`.
+
+
+## Research series ? Part 1
+
+Open [research.html](research.html), or follow **Research series** from any survey page. The offline story covers eight separate digital dimensions, historical snapshots, recent size gaps and industry comparisons, ICT constraints, and within-size/industry innovation associations.
+
+Reproduce source checks, decisions, CSV tables and the findings paper:
+
+```powershell
+python scripts/build_digital_research.py
+python scripts/test_digital_research.py
+```
+
+The builder checks selected numeric observations against original XLS/XLSX workbooks (xlrd and openpyxl). The test requires optional Playwright and Microsoft Edge. Research outputs live in `research/part-1-digital-capability/`; `data/research-digital-capability.js` supports direct offline opening. The discovery inventory is separate and remains unreviewed.
+
+Comparability is explicit: only 2021?22/2024?25 social media presence and orders received are approved temporal comparisons. Historical points are snapshots pending full harmonisation; known recent breaks are separated. No composite maturity index, interpolated years, causal effect, statistical significance or composition-adjusted national trend is asserted. See the [findings](research/part-1-digital-capability/findings.md) and [protocol](research/part-1-digital-capability/protocol.md).
+
+
+## Research series - Part 2: AI adoption
+
+Open [research-ai.html](research-ai.html), also linked from Part 1. The offline story presents 2024-25 AI adoption by size, industry and geography, source-linked digital context, earlier snapshots, and explicit evidence limits. Source numeric checks, comparability decisions, gap calculations and flag sensitivity are reproducible:
+
+```powershell
+python scripts/build_ai_research.py
+python scripts/test_ai_research.py
+```
+
+The builder uses openpyxl and the supplied workbooks; no network or microdata is required. Browser tests use Playwright and Edge. Outputs and the findings paper are in `research/part-2-ai-adoption/`. The AI-by-innovation gap is withheld because the public source's denominator descriptions conflict. No temporal AI change or causal effect is asserted.

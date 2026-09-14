@@ -2,3 +2,5 @@
 .year-nav{min-width:125px}.year-nav select{background:white}.population-note{font-size:12px;background:#f5f7f2;padding:12px;border-radius:6px;white-space:pre-line}.secondary{flex-wrap:wrap}.secondary .wide{min-width:220px}.bar-row.unreliable .track{background:#fff1db}.heat td.unreliable{background:#fff1db!important;color:#684611!important}@media(max-width:760px){.brand{font-size:12px}.year-nav{min-width:112px}.secondary .wide{min-width:0}}
 
 .coverage-control{margin-bottom:18px;max-width:480px}
+
+.research-link{font-size:13px;color:var(--green);margin:0 12px}.top{gap:12px;flex-wrap:wrap}@media(max-width:760px){.research-link{margin:0;font-size:12px}}
