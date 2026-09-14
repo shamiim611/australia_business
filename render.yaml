@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: australia-business
+    runtime: static
+    buildCommand: ""
+    staticPublishPath: .
+    pullRequestPreviewsEnabled: true

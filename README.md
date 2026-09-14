@@ -2,6 +2,10 @@
 
 Open `index.html` in a browser. The dashboard works offline with no build step, server, or external assets. It covers all 31 tables in the six supplied ABS workbooks.
 
+## Deploy with Render
+
+This is a static site. In Render, choose **New > Blueprint** and select this repository; `render.yaml` configures the service automatically. Alternatively, create a Static Site with `.` as the publish directory and no build command. The deployed site starts at `index.html` and includes the survey-year pages.
+
 The national cards and innovation overview use published totals and matched breakdowns. The topic explorer supports category comparisons, measure comparisons, table heatmaps, original notes, workbook links and CSV downloads. Controls are scoped to the selected published table.
 
 ## Rebuild data
